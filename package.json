@@ -1,0 +1,22 @@
+{
+  "name": "mrc-tool",
+  "version": "0.6.080116",
+  "description": "mrc-tool-api",
+  "author": {
+    "name": "Mateo Karadža",
+    "email": "mbalkana@live.com",
+    "website": "http://mateokaradza.from.hr/"
+  },
+  "dependencies": {
+    "body-parser": "~1.8.1",
+    "cookie-parser": "^1.3.5",
+    "cors": "^2.7.1",
+    "express": "~4.9.0",
+    "express-jwt": "^3.4.0",
+    "express-mysql-session": "^1.1.1",
+    "express-session": "^1.14.0",
+    "jade": "~1.6.0",
+    "morgan": "~1.3.0",
+    "mysql": "~2.6.2"
+  }
+}
