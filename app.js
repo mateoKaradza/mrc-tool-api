@@ -10,18 +10,7 @@ var jwt = require('jsonwebtoken');
 
 var cors = require('cors');
 
-var allowCrossDomain = function(req, res, next) {
-    res.header('Access-Control-Allow-Origin', 'http://localhost:3000');
-    res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
-    res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization, x-access-token');
-
-    next();
-}
-
 // Configure app
-app.use(express.static(path.join(__dirname, 'public')));
-app.set('view engine', 'jade');
-app.set('views', path.join(__dirname, 'views'));
 app.use(cors());
 app.set('json spaces', 2);
 app.use('', router);
