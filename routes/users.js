@@ -21,7 +21,7 @@ router.post('/login', function (req, res, next) {
     else 
       userFunctions.ComparePasswords(req.body.password, user[0].password, function (resp) {
         if (resp) {
-          const payload = {username: user[0].username}
+          const payload = {username: user[0].username};
           var token = jwt.sign(payload, req.app.get('superSecret'), { expiresIn: "1 day" });
           res.json({ token });
         } else 
