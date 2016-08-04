@@ -10,7 +10,7 @@ router.get('/verify', function (req, res) {
   jwt.verify(token, req.app.get('superSecret'), function(err, decoded) {      
     if (err) return res.status(401).json({ err: 'Failed to authenticate token.' }); 
     req.decoded = decoded;
-    res.json({ user: decoded.username });
+    res.json({ username: decoded.username, token });
   });
 });
 
@@ -21,7 +21,8 @@ router.post('/login', function (req, res, next) {
     else 
       userFunctions.ComparePasswords(req.body.password, user[0].password, function (resp) {
         if (resp) {
-          var token = jwt.sign(user, req.app.get('superSecret'), { expiresIn: "1 day" });
+          const payload = {username: user[0].username}
+          var token = jwt.sign(payload, req.app.get('superSecret'), { expiresIn: "1 day" });
           res.json({ token });
         } else 
           res.status(401).json({ err: 'Passwords do not match!' });
