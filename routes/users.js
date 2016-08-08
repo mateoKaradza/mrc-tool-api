@@ -16,17 +16,17 @@ router.get('/verify', function (req, res) {
 
 router.post('/login', function (req, res, next) {
   userFunctions.GetUser(req.body.username, function (err, user) {
-    if (err) res.status(400).json(err);
-    else if (!user) res.status(401).json({ err: 'User does not exist' });
-    else 
-      userFunctions.ComparePasswords(req.body.password, user[0].password, function (resp) {
-        if (resp) {
-          const payload = {username: user[0].username};
-          var token = jwt.sign(payload, req.app.get('superSecret'), { expiresIn: "1 day" });
-          res.json({ token });
-        } else 
-          res.status(401).json({ err: 'Passwords do not match!' });
-      });
+    if (err) return next(err);
+    else if (!user) return next(new Error('User does not exist!'));
+    
+    userFunctions.ComparePasswords(req.body.password, user[0].password, function (resp) {
+      if (resp) {
+        const payload = {username: user[0].username};
+        var token = jwt.sign(payload, req.app.get('superSecret'), { expiresIn: "1 day" });
+        return res.json({ token });
+      } else 
+      res.status(401).json({ err: 'Passwords do not match!' });
+    });
   });
 });
 

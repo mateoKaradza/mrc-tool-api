@@ -23,7 +23,6 @@ app.use(bodyParser.urlencoded({
 app.set('superSecret', 'the-shared-secret-54875425')
 
 // Routing
-
 var theRoutes = require('./routes');
 app.use('/api', theRoutes);
 
