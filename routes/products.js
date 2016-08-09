@@ -7,41 +7,45 @@ var productFunctions = require('../functions/productFunctions.js');
 var orderFunctions = require('../functions/orderFunctions.js');
 
 // All Products - split
-router.get('/', function (req, res) {
-    if (req.query.search === undefined) 
-        return productFunctions.GetAllProducts(function (err, products) {
-            if (err) return next(err);
-            res.json(products);
-        }); 
-    productFunctions.FilterProducts(req.query.search, function (err, products) {
+router.get('/', function (req, res, next) {
+    productFunctions.GetAllProducts(function (err, products) {
+        if (err) return next(err);
+        res.json(products);
+    }); 
+});
+
+router.get('/search/:query', function (req, res, next) {
+    productFunctions.FilterProducts(req.params.query, function (err, products) {
         if (err) return next(err);
         res.json(products);
     });
 });
 
-router.post('/new' , function (req, res) {
+router.post('/new' , function (req, res, next) {
     productFunctions.InsertProduct(req.body.product, function (err, product) {
         if (err) return next(err);
         res.status(201).json(product);
     }); 
 });
 
-router.get('/:id/', function (req, res) {
+router.get('/:id/', function (req, res, next) {
     productFunctions.GetProduct(req.params.id, function (err, product) {
         if (err) return next(err);
         res.json(product);
     }); 
 });
 
-router.post('/:id/edit', function (req, res) {
+router.post('/:id/edit', function (req, res, next) {
     productFunctions.UpdateProduct(req.body.product, function (err, product) {
         if (err) return next(err);
         res.json(product);
     });
 });
 
+// promise
+
 // front end does the two checks, but if avoided can cause error since product exists as a foreign key in other tables
-router.delete('/:id/', function (req, res) {
+router.delete('/:id/', function (req, res, next) {
     productFunctions.GetSupplies(req.params.id, function (err, supplies) {
 		if (err || supplies.length > 0) return next(err || new Error('This product has supplies - delete them first.'));
         productFunctions.GetProductOrders(req.params.id, function (err, orders) {
@@ -54,21 +58,21 @@ router.delete('/:id/', function (req, res) {
     }); 
 });
 
-router.get('/:id/orders', function (req, res) {
+router.get('/:id/orders', function (req, res, next) {
     productFunctions.GetProductOrders(req.params.id, function (err, orders) {
 		if (err) return next(err);
         res.json(orders);
     }); 
 });
 
-router.get('/:id/supplies', function (req, res) {
+router.get('/:id/supplies', function (req, res, next) {
     productFunctions.GetSupplies(req.params.id, function (err, supplies) {
 		if (err) return next(err);
         res.json(supplies);
     }); 
 });
 
-router.post('/:id/status', function (req, res) {
+router.post('/:id/status', function (req, res, next) {
     productFunctions.UpdateStatus(req.body.product_id, function (err, product) {
         if (err) return next(err);
         res.json(product);

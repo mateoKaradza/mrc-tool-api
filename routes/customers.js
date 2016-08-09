@@ -5,32 +5,39 @@ var pool = require('../config/connection.js');
 
 var customerFunctions = require('../functions/customerFunctions.js')
 
-router.get('/', function (req, res) {
-    if (req.query.search === undefined) 
-        return customerFunctions.GetAllCustomers(function (err, allCustomers) {
-            if (err) return next(err);
-            res.json(allCustomers);
-        });
-    customerFunctions.FilterCustomers(req.query.search, function (err, allCustomers) {
+router.get('/', function (req, res, next) {
+    customerFunctions.GetAllCustomers(function (err, allCustomers) {
         if (err) return next(err);
         res.json(allCustomers);
     });
-    
 });
 
-router.post('/new' , function (req, res) {
+router.get('/search/:query', function (req, res, next) {
+    customerFunctions.FilterCustomers(req.params.query, function (err, allCustomers) {
+        if (err) return next(err);
+        res.json(allCustomers);
+    });
+});
+
+router.post('/new' , function (req, res, next) {
     customerFunctions.InsertCustomer(req.body.customer, function (err, customer) {
         if (err) return next(err);
         res.status(201).json(customer);
     }); 
 });
 
-router.get('/:id/', function (req, res) {
+router.get('/:id/', function (req, res, next) {
     customerFunctions.GetCustomer(req.params.id, function (err, customer) {
         if (err) return next(err);
         res.json(customer);
     });
 });
+
+
+
+// promise
+
+
 
 router.delete('/:id/', function (req, res, next) {
     customerFunctions.GetOrders(req.params.id, function (err, orders) {
@@ -42,21 +49,21 @@ router.delete('/:id/', function (req, res, next) {
     }); 
 });
 
-router.post('/:id/edit', function (req, res) {
+router.post('/:id/edit', function (req, res, next) {
     customerFunctions.UpdateCustomer(req.body.customer, function (err, customer) {
         if (err) return next(err);
         res.json(customer);
     });
 });
 
-router.get('/:id/orders', function (req, res) {
+router.get('/:id/orders', function (req, res, next) {
     customerFunctions.GetOrders(req.params.id, function (err, orders) {
         if (err) return next(err);
         res.json(orders);
     });
 });
 
-router.get('/:id/items', function (req, res) {
+router.get('/:id/items', function (req, res, next) {
     customerFunctions.ProductsByCustomer(req.params.id, function (err, items) {
         if (err) return next(err);
         res.json(items);

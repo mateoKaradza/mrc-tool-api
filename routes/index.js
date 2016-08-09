@@ -4,7 +4,6 @@ var router = express.Router();
 var jwt = require('jsonwebtoken');
 
 var Customers = require('./customers');
-
 var Home = require('./home');
 var Customers = require('./customers');
 var Orders = require('./orders');
