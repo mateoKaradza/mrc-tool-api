@@ -14,7 +14,7 @@ module.exports.GetOrderInfo = function (order_id, callback) {
 };
 
 module.exports.GetOrderItemList = function (order_id, callback) {
-    pool.query('select *,order_details.quantity * order_details.price as total, order_details.inventory_cost as inventory_cost, order_details.quantity as quantity, products.name as product_name, order_details.first_stone_earning as first_stone_earning, order_details.second_stone_earning as second_stone_earning, order_details.third_stone_earning as third_stone_earning FROM order_details INNER JOIN products on order_details.product_id = products.product_id WHERE order_details.order_id = ? ORDER BY order_details.price ASC', order_id, callback);
+    pool.query('select *, order_details.quantity * order_details.price as total, order_details.inventory_cost as inventory_cost, order_details.quantity as quantity, products.name as product_name, order_details.first_stone_earning as first_stone_earning, order_details.second_stone_earning as second_stone_earning, order_details.third_stone_earning as third_stone_earning FROM order_details INNER JOIN products on order_details.product_id = products.product_id WHERE order_details.order_id = ? ORDER BY order_details.price ASC', order_id, callback);
 };
 
 module.exports.InsertOrderItem = function (item, callback) {

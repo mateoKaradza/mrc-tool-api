@@ -34,10 +34,11 @@ router.get('/:id/', function (req, res, next) {
     });
 });
 
+
 router.delete('/:id/', function (req, res, next) {
     async.waterfall([function (callback) {
         customerFunctions.GetOrders(req.params.id, callback)
-    }, function (orders, unknownArg, callback) {
+    }, function (orders, fields, callback) {
         if (orders.length === 0) return customerFunctions.DeleteCustomer(req.params.id, callback);
         callback('customer has orders');
     }], function (err, results) {
@@ -45,6 +46,7 @@ router.delete('/:id/', function (req, res, next) {
         res.json(results);
     })
 });
+
 
 router.post('/:id/edit', function (req, res, next) {
     customerFunctions.UpdateCustomer(req.body.customer, function (err, customer) {

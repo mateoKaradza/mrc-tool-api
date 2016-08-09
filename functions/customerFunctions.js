@@ -18,7 +18,7 @@ module.exports.FilterCustomers = function (filter, callback) {
 };
 
 module.exports.GetOrders = function (customer_id, callback) {
-    pool.query('select *, (SELECT SUM(order_details.quantity * order_details.price) FROM order_details WHERE order_details.order_id = orders.order_id GROUP BY order_details.order_id) as total FROM orders INNER JOIN platforms on orders.platform_id = platforms.platform_id WHERE orders.customer_id = ? ORDER BY order_id DESC', customer_id, callback);
+    pool.query('SELECT *, (SELECT SUM(order_details.quantity * order_details.price) FROM order_details WHERE order_details.order_id = orders.order_id GROUP BY order_details.order_id) as total FROM orders INNER JOIN platforms on orders.platform_id = platforms.platform_id WHERE orders.customer_id = ? ORDER BY order_id DESC', customer_id, callback);
 };
 
 module.exports.UpdateCustomer = function (customer, callback) {

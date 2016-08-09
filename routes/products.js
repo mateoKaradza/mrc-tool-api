@@ -46,10 +46,10 @@ router.post('/:id/edit', function (req, res, next) {
 router.delete('/:id/', function (req, res, next) {
     async.waterfall([function (callback) {
         productFunctions.GetSupplies(req.params.id, callback)
-    }, function (supplies, unknownArg, callback) {
+    }, function (supplies, fields, callback) {
         if (supplies.length === 0) return productFunctions.GetProductOrders(req.params.id, callback);
         callback('product has supplies');
-    }, function (orders, unknownArg, callback) {
+    }, function (orders, fields, callback) {
         if (orders.length === 0) return productFunctions.DeleteProduct(req.params.id, callback);
         callback('product is part of orders');
     }], function (err, results) {

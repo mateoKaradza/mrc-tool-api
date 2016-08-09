@@ -41,7 +41,7 @@ router.get('/:id', function (req, res, next) {
 router.delete('/:id/', function (req, res, next) {
     async.waterfall([function (callback) {
         orderFunctions.GetOrderItemList(req.params.id, callback)
-    }, function (items, unknownArg, callback) {
+    }, function (items, fields, callback) {
         if (items.length === 0) return orderFunctions.DeleteOrder(req.params.id, callback);
         callback('order has items');
     }], function (err, results) {
@@ -67,8 +67,8 @@ router.get('/:id/items', function (req, res, next) {
 // promise
 router.post('/:id/item/new', function (req, res, next) {
     async.waterfall([function (callback) {
-        orderFunctions.InsertOrderItem(req.params.id, callback)
-    }, function (callback) {
+        orderFunctions.InsertOrderItem(req.body.item, callback)
+    }, function (var1, var2, callback) {
         productFunctions.UpdateQuantity(req.body.item.product_id, -Number(req.body.item.quantity), callback)
     }], function (err, results) {
         if(err) return next(err);
@@ -87,10 +87,10 @@ router.post('/:id/item/edit', function (req, res, next) {
     var _oldItem;
     async.waterfall([function (callback) {
         orderFunctions.GetOrderItem(req.body.item.order_details_id, callback)
-    }, function (oldItem, unknownArg, callback) {
+    }, function (oldItem, fields, callback) {
         _oldItem = oldItem;
         orderFunctions.UpdateOrderItem(req.body.item, callback);
-    }, function (item, unknownArg, callback) {
+    }, function (item, fields, callback) {
         const theQuantity = Number(_oldItem[0].quantity) - Number(req.body.item.quantity);
         productFunctions.UpdateQuantity(req.body.item.product_id, theQuantity, callback);
     }], function (err, results) {

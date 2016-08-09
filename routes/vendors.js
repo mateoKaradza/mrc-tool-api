@@ -44,7 +44,7 @@ router.post('/:id/edit', function (req, res, next) {
 router.delete('/:id/', function (req, res, next) {
     async.waterfall([function (callback) {
         vendorFunctions.GetSupplies(req.params.id, callback)
-    }, function (supplies, unknownArg, callback) {
+    }, function (supplies, fields, callback) {
         if (supplies.length === 0) return vendorFunctions.DeleteVendor(req.params.id);
         callback('vendor has supplies');
     }], function (err, results) {
