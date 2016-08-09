@@ -1,5 +1,6 @@
 var express = require('express');
 var router = express.Router();
+var async = require('async');
 
 var pool = require('../config/connection.js');
 
@@ -41,13 +42,15 @@ router.post('/:id/edit', function (req, res, next) {
 });
 
 router.delete('/:id/', function (req, res, next) {
-    vendorFunctions.getSupplies(req.params.id, function (err, supplies) {
-        if (err || supplies.length > 0) return next(err || new Error('Vendor has supplies - delete them first.'))
-        vendorFunctions.DeleteVendor(req.params.id, function (err, vendor) {
-                if (err) return next(err);
-                res.json(vendor);
-        })
-    });
+    async.waterfall([function (callback) {
+        vendorFunctions.GetSupplies(req.params.id, callback)
+    }, function (supplies, unknownArg, callback) {
+        if (supplies.length === 0) return vendorFunctions.DeleteVendor(req.params.id);
+        callback('vendor has supplies');
+    }], function (err, results) {
+        if(err) return next(err);
+        res.json(results);
+    })
 });
 
 router.get('/:id/supplies', function (req, res, next) {

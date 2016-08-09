@@ -1,5 +1,6 @@
 var express = require('express');
 var router = express.Router();
+var async = require('async');
 
 var pool = require('../config/connection.js');
 
@@ -42,20 +43,19 @@ router.post('/:id/edit', function (req, res, next) {
     });
 });
 
-// promise
-
-// front end does the two checks, but if avoided can cause error since product exists as a foreign key in other tables
 router.delete('/:id/', function (req, res, next) {
-    productFunctions.GetSupplies(req.params.id, function (err, supplies) {
-		if (err || supplies.length > 0) return next(err || new Error('This product has supplies - delete them first.'));
-        productFunctions.GetProductOrders(req.params.id, function (err, orders) {
-            if (err || orders.length > 0) return next(err || new Error('This product exists in orders - delete it from there first.'));
-            productFunctions.DeleteProduct(req.params.id, function (err, deleted) {
-                if (err) return next(err);
-                res.json(deleted);
-            });
-        }); 
-    }); 
+    async.waterfall([function (callback) {
+        productFunctions.GetSupplies(req.params.id, callback)
+    }, function (supplies, unknownArg, callback) {
+        if (supplies.length === 0) return productFunctions.GetProductOrders(req.params.id, callback);
+        callback('product has supplies');
+    }, function (orders, unknownArg, callback) {
+        if (orders.length === 0) return productFunctions.DeleteProduct(req.params.id, callback);
+        callback('product is part of orders');
+    }], function (err, results) {
+        if(err) return next(err);
+        res.json(results);
+    })
 });
 
 router.get('/:id/orders', function (req, res, next) {

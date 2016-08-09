@@ -1,5 +1,6 @@
 var express = require('express');
 var router = express.Router();
+var async = require('async');
 
 var pool = require('../config/connection.js');
 
@@ -33,20 +34,16 @@ router.get('/:id/', function (req, res, next) {
     });
 });
 
-
-
-// promise
-
-
-
 router.delete('/:id/', function (req, res, next) {
-    customerFunctions.GetOrders(req.params.id, function (err, orders) {
-		if (err || orders.length > 0) return next(err || new Error('Customer has orders - delete them first.'));
-        customerFunctions.DeleteCustomer(req.params.id, function (err, deleted) {
-            if (err) return next(err);
-            res.json(deleted);
-        })
-    }); 
+    async.waterfall([function (callback) {
+        customerFunctions.GetOrders(req.params.id, callback)
+    }, function (orders, unknownArg, callback) {
+        if (orders.length === 0) return customerFunctions.DeleteCustomer(req.params.id, callback);
+        callback('customer has orders');
+    }], function (err, results) {
+        if(err) return next(err);
+        res.json(results);
+    })
 });
 
 router.post('/:id/edit', function (req, res, next) {
